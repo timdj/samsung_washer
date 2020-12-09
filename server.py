@@ -40,8 +40,11 @@ class RequestHandler(BaseHTTPRequestHandler):
 def main():
     port = 8889
     print('Listening on localhost:%s' % port)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    ctx.set_ciphers('ALL:@SECLEVEL=0')
+    ctx.load_verify_locations('ac14k_m.pem')
     server = HTTPServer(('', port), RequestHandler)
-    server.socket = ssl.wrap_socket(server.socket, server_side=True, ssl_version=ssl.PROTOCOL_SSLv3, certfile='ac14k_m.pem')
+    server.socket = ctx.wrap_socket(server.socket, server_side=True)
     server.serve_forever()
 
 if __name__ == "__main__":
